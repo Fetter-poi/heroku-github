@@ -77,6 +77,7 @@ def parse_url(**kwargs):
         '''
         data = methods[site_name][dir](*args)
 
+
     for script in field_list:
         if script['field'] == 'replace':
             print(script['content'])
@@ -108,8 +109,6 @@ def parse_url(**kwargs):
         args = [r['from_folder']]
         if 'to_folder' in r:
             args.append(r['to_folder'])
-        if 'from_folder' in r:
-            args[0] = r['from_folder'].split('/')[-1]
         if r['from'] == 'url':
             args[0] = '_temp'
         if 'commit_message' in r and site_name == 'github':
@@ -122,6 +121,6 @@ def parse_url(**kwargs):
             args.append(r['from'])
         data = methods[site_name][dir](*args)
         if 'from' in r and 'from_folder' in r:
-            shutil.rmtree(r['from_folder'])
+            shutil.rmtree(r['from_folder'].split('/')[0])
         return data
 

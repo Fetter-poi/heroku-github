@@ -5,6 +5,7 @@ from git import Repo, Git, config, GitCommandError
 my_account = os.environ.get('GITHUB_USERNAME', None)
 
 def push_to_github(local_dir, repo_path, commit_message='No commit message was set.', github_username=os.environ.get('GITHUB_USERNAME', None), github_password=os.environ.get('GITHUB_PASSWORD', None)):
+    local_dir = local_dir.split('/')[0]
     repo_list = repo_path.split('/')
     try:
         n = repo_list.index('tree')
@@ -28,6 +29,7 @@ def push_to_github(local_dir, repo_path, commit_message='No commit message was s
     repo = Repo.clone_from(**kwargs)
     os.chdir(git_dir)
     os.system('find . | grep -v "git" | xargs rm -rf')
+    print('local_dir', local_dir)
     os.system(' '.join(['cp', '-rf', os.path.join('..', '..', local_dir, '.'), '.']))
 
     origin = repo.remotes[0]
@@ -58,8 +60,13 @@ def clone_from_github(repo_name,account=my_account,github_username=os.environ.ge
         None
 
 def copy_from_github(repo_name,account=my_account,github_username=os.environ.get('GITHUB_USERNAME', None), github_password=os.environ.get('GITHUB_PASSWORD', None)):
+    repo_list = repo_name.split('/')
+    repo_name = repo_list[0]
+    branch = repo_list[-1] if 'tree' in repo_list else None
     repo_url = '/'.join(['https://' + github_username + ':' + github_password + '@github.com',account,repo_name])
     repo = Repo.clone_from(repo_url,'_temp')
+    if branch:
+        repo.git.checkout(branch)
     shutil.rmtree('_temp/.git')
     os.system('cp -r {} {}'.format('_temp/.', repo_name))
     shutil.rmtree('_temp')

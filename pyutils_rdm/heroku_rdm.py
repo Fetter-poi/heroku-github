@@ -59,7 +59,7 @@ def push_from_site_to_heroku(*args):
     else:
         #There is no existing app to upload a tar file to.
         build_type = 'setup'
-    from_github = True # pass github tarball url directly to heroku
+    from_github = False # pass github tarball url directly to heroku
     if 'github' in args and from_github:
         return push_from_github_to_heroku(build_type, *args[:-1])
     if build_type == 'build':
